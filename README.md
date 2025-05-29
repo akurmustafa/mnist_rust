@@ -9,4 +9,4 @@ Following command does a single training and prints the accuracy on the test dat
 `cargo run -- --mnist './data/mnist' --batch-size 64 --learning-rate 0.001 --print-every 50`
 
 If you want to limit iteration in the training, you can do so with:   
-`cargo run -- --mnist './data/mnist' --batch-size 64 --learning-rate 0.001 --print-every 50 --n_iter=100`
+`cargo run -- --mnist './data/mnist' --batch-size 64 --learning-rate 0.001 --print-every 50 --n-iter=100`
