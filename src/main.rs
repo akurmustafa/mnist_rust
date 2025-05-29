@@ -1,3 +1,4 @@
+use clap::Parser;
 use std::time::Instant;
 
 mod utils;
@@ -5,20 +6,50 @@ use utils::dataloader::DataLoader;
 use utils::losses::{cross_entropy_grad, cross_entropy_loss};
 use utils::model::get_linear_model;
 
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// Path to MNIST folder
+    #[arg(short, long)]
+    mnist: String,
+
+    /// Batch size
+    #[arg(short, long, default_value_t = 32)]
+    batch_size: usize,
+
+    /// Use same batch for every iteration
+    #[arg(short = 's', long, default_value_t = false)]
+    same_batch: bool,
+
+    /// Learning rate
+    #[arg(short = 'r', long, default_value_t = 0.01)]
+    learning_rate: f64,
+
+    /// Print loss every N batches
+    #[arg(short = 'p', long, default_value_t = 20)]
+    print_every: usize,
+
+    /// Number of training iterations
+    #[arg(short = 'i', long, default_value_t = -1)]
+    n_iter: i64,
+}
+
 fn main() {
     let start = Instant::now();
-    ////// ------Parameters -------- //////
-    let training_csv_path = "/Users/akur/Library/CloudStorage/OneDrive-OregonHealth&ScienceUniversity/akurmustafa/docs/courses/2025_2-spring/BMI643/project/mlp/data/mnist/mnist_train.csv";
-    let test_csv_path = "/Users/akur/Library/CloudStorage/OneDrive-OregonHealth&ScienceUniversity/akurmustafa/docs/courses/2025_2-spring/BMI643/project/mlp/data/mnist/mnist_test.csv";
-    let batch_size = 32;
-    let same_batch = false;
-    let learning_rate = 0.01;
-    let print_every = 20; // Print loss every 20 batches
-    let n_iter = 2000; // Number of iteration for training
+    let args = Args::parse();
 
-    ////// ------Parameters -------- //////
+    ////// ------ Parameters from command line -------- //////
+    let mnist_folder = args.mnist.as_str();
+    let batch_size = args.batch_size;
+    let same_batch = args.same_batch;
+    let learning_rate = args.learning_rate;
+    let print_every = args.print_every;
+    let n_iter = args.n_iter;
+    ////// ------ End of parameters -------- //////
 
-    let mut train_dataloader = DataLoader::new(training_csv_path, batch_size, same_batch);
+    let training_csv_path = format!("{}/mnist_train.csv", mnist_folder);
+    let test_csv_path = format!("{}/mnist_test.csv", mnist_folder);
+    let mut train_dataloader = DataLoader::new(training_csv_path.as_str(), batch_size, same_batch);
     let layers = vec![
         (784, "identity"), // Input layer
         (128, "relu"),     // Hidden layer 1
@@ -41,14 +72,14 @@ fn main() {
             println!("Progress: {}/{}", count, train_dataloader.len());
         }
         count += 1;
-        if count >= n_iter {
+        if n_iter != -1 && count as i64 >= n_iter {
             break; // Limit to 100 batches for testing
         }
     }
 
     // Evaluate the model on test data
     // TODO: Add evaluation logic
-    let mut test_dataloader = DataLoader::new(test_csv_path, batch_size, same_batch);
+    let mut test_dataloader = DataLoader::new(test_csv_path.as_str(), batch_size, same_batch);
     let mut y_preds = vec![];
     let mut y_targets = vec![];
     let mut count = 0;
