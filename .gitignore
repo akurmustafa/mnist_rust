@@ -1,0 +1,10 @@
+/target
+
+# Do not track .zip files
+*.zip
+
+# do not track macOS specific files
+.DS_Store
+
+# Do not track data files
+data/mnist/
