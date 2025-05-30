@@ -58,6 +58,7 @@ fn main() {
     ];
     let mut model = get_linear_model(layers);
     let mut count = 0;
+    let mut losses = vec![];
     // Training loop
     while let Some((x_batch, y_batch)) = train_dataloader.next_batch() {
         // println!("Batch X shape: {:?}", x_batch.shape());
@@ -65,6 +66,7 @@ fn main() {
         let output = model.forward(&x_batch);
         // println!("Output shape: {:?}", output.shape());
         let loss = cross_entropy_loss(&output, &y_batch, true);
+        losses.push(loss.to_vec()[0].clone());
         let d_loss = cross_entropy_grad(&output, &y_batch);
         model.backward(&d_loss, learning_rate);
         if count % print_every == 0 {
@@ -76,6 +78,18 @@ fn main() {
             break; // Limit to 100 batches for testing
         }
     }
+    // Save losses to a file
+    let loss_txt = format!("./losses.txt");
+    std::fs::write(
+        loss_txt,
+        losses
+            .iter()
+            .map(|l| l.to_string())
+            .collect::<Vec<String>>()
+            .join("\n"),
+    )
+    .expect("Unable to write losses to file");
+    println!("Training completed. Losses saved to losses.txt");
 
     // Evaluate the model on test data
     // TODO: Add evaluation logic
