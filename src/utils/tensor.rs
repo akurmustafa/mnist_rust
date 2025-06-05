@@ -1,6 +1,7 @@
 use std::fmt::Display;
 
-use rand::Rng;
+use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Tensor2D {
@@ -28,7 +29,8 @@ impl Tensor2D {
     }
 
     pub fn random(rows: usize, cols: usize) -> Self {
-        let mut rng = rand::thread_rng();
+        let seed: u64 = 23;
+        let mut rng = StdRng::seed_from_u64(seed);
         let range = -0.01..0.01;
         let data = (0..rows * cols)
             .map(|_| rng.gen_range(range.clone()))

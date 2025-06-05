@@ -2,8 +2,8 @@ use std::fs::File;
 
 use super::tensor::Tensor2D;
 
-use rand::prelude::SliceRandom;
-use rand::thread_rng;
+use rand::rngs::StdRng;
+use rand::{SeedableRng, seq::SliceRandom};
 
 pub struct DataLoader {
     data: Tensor2D,
@@ -40,7 +40,9 @@ impl DataLoader {
         let labels = Tensor2D::new(n_rows, 1, label_data);
         // create a shuffled indices vector
         let mut indices: Vec<usize> = (0..n_rows).collect();
-        let mut rng = thread_rng();
+        // Use a fixed seed for reproducibility
+        let seed: u64 = 23;
+        let mut rng = StdRng::seed_from_u64(seed);
         indices.shuffle(&mut rng);
 
         DataLoader {

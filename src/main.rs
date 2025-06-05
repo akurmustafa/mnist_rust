@@ -61,10 +61,7 @@ fn main() {
     let mut losses = vec![];
     // Training loop
     while let Some((x_batch, y_batch)) = train_dataloader.next_batch() {
-        // println!("Batch X shape: {:?}", x_batch.shape());
-        // println!("Batch Y shape: {:?}", y_batch.shape());
         let output = model.forward(&x_batch);
-        // println!("Output shape: {:?}", output.shape());
         let loss = cross_entropy_loss(&output, &y_batch, true);
         losses.push(loss.to_vec()[0].clone());
         let d_loss = cross_entropy_grad(&output, &y_batch);

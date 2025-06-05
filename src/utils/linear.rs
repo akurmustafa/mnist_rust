@@ -36,7 +36,7 @@ impl LinearLayer {
             }
             "identity" => {
                 // Identity activation derivative is 1
-                |x| 1.0
+                |_x| 1.0
             }
             _ => panic!("Unsupported activation function: {}", activation),
         };
