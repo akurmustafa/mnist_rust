@@ -7,4 +7,4 @@
 .DS_Store
 
 # Do not track data files
-data/mnist/
+data/mnist/mnist_train.csv
